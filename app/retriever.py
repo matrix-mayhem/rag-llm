@@ -1,23 +1,11 @@
-import weaviate
 from weaviate.classes.config import Property, DataType
 from weaviate.classes.query import Filter
 from app.embeddings import get_embedding
-import os
 
 CLASS_NAME = "Document"
 
 
-def get_client():
-    return weaviate.connect_to_local(
-        host=os.getenv("WEAVIATE_HOST", "localhost"),
-        port=8080,
-        grpc_port=50051
-    )
-
-
-def create_schema():
-    client = get_client()
-
+def create_schema(client):
     if not client.collections.exists(CLASS_NAME):
         client.collections.create(
             name=CLASS_NAME,
@@ -29,20 +17,21 @@ def create_schema():
         )
 
 
-def add_document(text: str, source: str = "default"):
-    client = get_client()
+def add_document(client, text: str, source: str = "default"):
     vector = get_embedding(text)
 
-    docs = client.collections.get(CLASS_NAME)
+    collection = client.collections.get(CLASS_NAME)
 
-    docs.insert(
-        properties={"text": text, "source": source},
+    collection.data.insert(
+        properties={
+            "text": text,
+            "source": source
+        },
         vector=vector
     )
 
 
-def hybrid_search(query: str, top_k: int = 5):
-    client = get_client()
+def hybrid_search(client, query: str, top_k: int = 5):
     vector = get_embedding(query)
 
     docs = client.collections.get(CLASS_NAME)

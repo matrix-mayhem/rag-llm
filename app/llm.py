@@ -29,7 +29,7 @@ def generate_answer(query, context_chunks):
     stop_sequences=["STOP"]
     )
 
-    response = client.models.generate_content_stream(
+    response = client.models.generate_content(
         model = "gemini-2.5-flash",
         contents = prompt,
         config=generate_config
