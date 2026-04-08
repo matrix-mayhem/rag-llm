@@ -1,0 +1,9 @@
+fastapi
+uvicorn
+weaviate-client
+langchain
+openai
+tiktoken
+python-dotenv
+httpx
+google-genai
