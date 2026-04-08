@@ -2,6 +2,7 @@ from google import genai
 from google.genai import types
 from dotenv import load_dotenv
 import os
+from app.token_tracker import count_tokens
 
 load_dotenv()
 
@@ -35,4 +36,11 @@ def generate_answer(query, context_chunks):
         config=generate_config
     )
 
-    return response.text
+    input_tokens = count_tokens(prompt)
+
+    output = response.text
+    output_tokens = count_tokens(output)
+
+    print(f"Tokens → Input: {input_tokens}, Output: {output_tokens}")
+
+    return output
